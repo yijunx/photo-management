@@ -1,3 +1,13 @@
-fastapi
+flask
 gunicorn
-unicorn
+gevent
+alembic
+boto3
+pydantic
+Flask-Cors
+psycopg2
+requests
+json-logging
+python-dotenv
+Flask-pydantic
+sqlalchemy

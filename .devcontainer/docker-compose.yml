@@ -12,3 +12,49 @@ services:
     command: ["tail -f /dev/null"]
     ports:
       - 8000:8000
+    networks:
+      - default
+    depends_on:
+      - db
+      - minio
+
+  db:
+    image: postgres:11
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=photo-management-devcon
+    networks:
+      - default
+
+  pgadmin:
+    image: dpage/pgadmin4:5.1
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pdadmin4@pdadmin.org
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - 5050:80
+    depends_on:
+      - db
+    networks:
+      - default
+
+  minio:
+    image: minio/minio
+    ports:
+      - 9000:9000
+    volumes:
+      - ~/minio-data/photo-management:/data
+    environment:
+      - MINIO_ACCESS_KEY=minioaccesskey
+      - MINIO_SECRET_KEY=miniosecretkey
+    command: server /data
+    networks:
+      - default
+
+networks:
+  default:
+    external:
+      name: micro-services
