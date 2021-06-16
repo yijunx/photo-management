@@ -14,7 +14,3 @@ def get_logger(name: str) -> logging.Logger:
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler(sys.stdout))
     return logger
-
-
-
-

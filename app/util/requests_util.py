@@ -1,6 +1,3 @@
-
-
-
 def create_response():
     return
 
