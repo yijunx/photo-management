@@ -11,7 +11,8 @@ from alembic import context
 # access to the values within the .ini file in use.
 config = context.config
 
-
+# tell alembic where is db
+# comment the line with sqlalchmy.url in the alembic.ini
 config.set_main_option("sqlalchemy.url", conf.DATABASE_URI)
 
 # Interpret the config file for Python logging.

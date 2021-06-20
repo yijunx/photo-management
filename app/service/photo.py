@@ -10,6 +10,7 @@ from app.schemas.photo import (
 )
 from app.repo import photo as photoRepo
 from app.util.photo_manager import PhotoManager
+from typing import Tuple
 
 pm = PhotoManager()
 
@@ -33,7 +34,9 @@ def get_db_session():
 
 def list_items(item_query: PhotoQuery) -> PhotoWithPagination:
     with get_db_session() as db:
-        item_with_paging = photoRepo.get_all()
+        item_with_paging = photoRepo.get_all(
+            db=db, page=item_query.page, size=item_query.size
+        )
     return item_with_paging
 
 
@@ -44,6 +47,13 @@ def create_item(item_create: PhotoCreate, file: FileStorage) -> Photo:
         # if upload fails, session will rollback
         # if session db.add() fails, upload will not happen
         pm.upload_file(file=file, key=item.id)
+    return item
+
+
+def get_item(item_id) -> Photo:
+    with get_db_session() as db:
+        db_item = photoRepo.get(db=db, item_id=item_id)
+        item = Photo.from_orm(db_item) 
     return item
 
 
@@ -63,3 +73,11 @@ def patch_item(item_id: str, item_patch: PhotoPatch) -> Photo:
         db_item = photoRepo.patch(db=db, item_id=item_id, item_patch=item_patch)
         item = Photo.from_orm(db_item)
     return item
+
+
+def download_item(item_id: str) -> Tuple[str, FileStorage]:
+    with get_db_session() as db:
+        db_item = photoRepo.get(db=db, item_id=item_id)
+        key = db_item.id
+    file = pm.download_file(key=key)
+    return key, file
